@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
+import { SignOptions } from "jsonwebtoken";
 import config from "../config";
 import { prisma } from "../lib/prisma";
+import { jwtUtils } from "../utils/jwt.utils";
 import { LoginUserPayload, TRegisterUser } from "./auth.interface";
 
 const createUserIntoDb = async (payload: TRegisterUser) => {
@@ -52,10 +54,33 @@ const loginUser = async (payload: LoginUserPayload) => {
     throw new Error("ur account has been blocked");
   }
 
-  return user;
+  const JwtPayload = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+  };
+  const accessToken = jwtUtils.createToken(
+    JwtPayload,
+
+    config.jwt_access_secret,
+
+    config.jwt_access_expires_in as SignOptions,
+  );
+
+  const refreshToken = jwtUtils.createToken(
+    JwtPayload,
+
+    config.jwt_refresh_secret,
+    config.jwt_refresh_expires_in as SignOptions,
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 export const authServices = {
   createUserIntoDb,
-  loginUser,
   loginUser,
 };
