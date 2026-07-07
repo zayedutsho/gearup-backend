@@ -9,3 +9,17 @@ enum UserStatus{
     ACTIVE
     BLOCKED
 }
+
+enum RentalStatus {
+  PLACED
+  CONFIRMED
+  PICKED_UP
+  RETURNED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
