@@ -8,8 +8,8 @@ model User {
   status   UserStatus @default(ACTIVE)
 
   // Relations
-  gearItems Gear[]
-
+  gearItems      Gear[]
+  profile        Profile?
   customerOrders RentalOrder[] @relation("CustomerOrders")
   providerOrders RentalOrder[] @relation("ProviderOrders")
 

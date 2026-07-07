@@ -3,6 +3,7 @@ export type TRegisterUser = {
   email: string;
   password: string;
   phone?: string;
+  avatar?: string;
   role: "CUSTOMER" | "PROVIDER";
 };
 

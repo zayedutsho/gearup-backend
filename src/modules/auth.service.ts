@@ -6,7 +6,7 @@ import { jwtUtils } from "../utils/jwt.utils";
 import { LoginUserPayload, TRegisterUser } from "./auth.interface";
 
 const createUserIntoDb = async (payload: TRegisterUser) => {
-  const { name, email, password, phone, role } = payload;
+  const { name, email, password, phone, role, avatar } = payload;
 
   const existingUser = await prisma.user.findUnique({
     where: { email },
@@ -28,12 +28,28 @@ const createUserIntoDb = async (payload: TRegisterUser) => {
       password: hashedPassword,
       phone,
       role,
+      profile: {
+        create: {
+          avatar,
+        },
+      },
     },
   });
 
-  const { password: _, ...userWithoutPassword } = createdUser;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: createdUser.id,
+      email: createdUser.email || email,
+    },
+    omit: {
+      password: true,
+    },
+    include: {
+      profile: true,
+    },
+  });
 
-  return userWithoutPassword;
+  return user;
 };
 
 const loginUser = async (payload: LoginUserPayload) => {
@@ -80,7 +96,24 @@ const loginUser = async (payload: LoginUserPayload) => {
     refreshToken,
   };
 };
+
+const getMyProfileFromDB = async (userId: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+    omit: {
+      password: true,
+    },
+    include: {
+      profile: true,
+    },
+  });
+
+  return user;
+};
 export const authServices = {
   createUserIntoDb,
   loginUser,
+  getMyProfileFromDB,
 };
