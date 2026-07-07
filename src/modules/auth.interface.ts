@@ -5,3 +5,8 @@ export type TRegisterUser = {
   phone?: string;
   role: "CUSTOMER" | "PROVIDER";
 };
+
+export interface LoginUserPayload {
+  email: string;
+  password: string;
+}

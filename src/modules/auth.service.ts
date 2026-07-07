@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import config from "../config";
 import { prisma } from "../lib/prisma";
-import { TRegisterUser } from "./auth.interface";
+import { LoginUserPayload, TRegisterUser } from "./auth.interface";
 
 const createUserIntoDb = async (payload: TRegisterUser) => {
   const { name, email, password, phone, role } = payload;
@@ -33,6 +33,23 @@ const createUserIntoDb = async (payload: TRegisterUser) => {
 
   return userWithoutPassword;
 };
+
+const loginUser = async (payload: LoginUserPayload) => {
+  const { email, password } = payload;
+  const user = await prisma.user.findFirstOrThrow({
+    where: {
+      email,
+    },
+  });
+
+  if (user?.status === "BLOCKED") {
+    throw new Error("ur account has been blocked");
+  }
+
+  return user;
+};
 export const authServices = {
   createUserIntoDb,
+  loginUser,
+  loginUser,
 };
