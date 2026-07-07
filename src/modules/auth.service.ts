@@ -42,6 +42,12 @@ const loginUser = async (payload: LoginUserPayload) => {
     },
   });
 
+  const isPassWordMatched = await bcrypt.compare(password, user.password);
+
+  if (!isPassWordMatched) {
+    throw new Error("password is not matched");
+  }
+
   if (user?.status === "BLOCKED") {
     throw new Error("ur account has been blocked");
   }

@@ -27,7 +27,7 @@ const logInUser = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.CREATED,
-      message: "User registered successfully",
+      message: "User loggedIn successfully",
       data: {
         result,
       },
