@@ -37,7 +37,7 @@ export const auth = (...requiredRoles: UserRole[]) => {
     );
 
     if (!verifiedToken.success) {
-      throw new Error(verifiedToken.error);
+      throw new Error(verifiedToken.message);
     }
 
     const { email, name, role, id } = verifiedToken.data as JwtPayload;
