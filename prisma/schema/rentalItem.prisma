@@ -1,19 +1,19 @@
 model RentalItem {
-  id            String        @id @default(uuid())
+  id String @id @default(uuid())
 
   rentalOrderId String
   gearId        String
 
-  quantity      Int           @default(1)
-  pricePerDay   Float
+  quantity    Int   @default(1)
+  pricePerDay Float
 
-  rentalOrder   RentalOrder   @relation(fields: [rentalOrderId], references: [id], onDelete: Cascade)
-  gear          Gear          @relation(fields: [gearId], references: [id])
+  rentalOrder RentalOrder @relation(fields: [rentalOrderId], references: [id], onDelete: Cascade)
+  gear        Gear        @relation(fields: [gearId], references: [id])
 
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([rentalOrderId])
   @@index([gearId])
-
   @@map("rentalItems")
 }

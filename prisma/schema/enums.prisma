@@ -4,10 +4,9 @@ enum UserRole {
   ADMIN
 }
 
-
-enum UserStatus{
-    ACTIVE
-    BLOCKED
+enum UserStatus {
+  ACTIVE
+  BLOCKED
 }
 
 enum RentalStatus {
@@ -22,4 +21,9 @@ enum PaymentStatus {
   PENDING
   PAID
   FAILED
+}
+
+enum PaymentProvider {
+  STRIPE
+  SSLCOMMERZ
 }

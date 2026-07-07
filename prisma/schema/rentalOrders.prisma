@@ -1,28 +1,27 @@
 model RentalOrder {
-  id            String          @id @default(uuid())
+  id String @id @default(uuid())
 
-  customerId    String
-  providerId    String
+  customerId String
+  providerId String
 
-  startDate     DateTime
-  endDate       DateTime
+  startDate DateTime
+  endDate   DateTime
 
-  totalAmount   Float
+  totalAmount Float
 
-  status        RentalStatus    @default(PLACED)
-  paymentStatus PaymentStatus   @default(PENDING)
+  status        RentalStatus  @default(PLACED)
+  paymentStatus PaymentStatus @default(PENDING)
 
-  customer      User            @relation("CustomerOrders", fields: [customerId], references: [id])
-  provider      User            @relation("ProviderOrders", fields: [providerId], references: [id])
+  customer User @relation("CustomerOrders", fields: [customerId], references: [id])
+  provider User @relation("ProviderOrders", fields: [providerId], references: [id])
 
-  rentalItems   RentalItem[]
+  rentalItems RentalItem[]
+  payment     Payment?
 
-//   payment       Payment?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-
-    @@index([customerId])
-    @@index([providerId])
-    @@map("rentalOrders")
+  @@index([customerId])
+  @@index([providerId])
+  @@map("rentalOrders")
 }
