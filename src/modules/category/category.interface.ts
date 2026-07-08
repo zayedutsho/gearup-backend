@@ -4,3 +4,10 @@ export type TCreateCategory = {
 };
 
 export type TUpdateCategory = Partial<TCreateCategory>;
+export type TCategoryQuery = {
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: "name" | "createdAt";
+  sortOrder?: "asc" | "desc";
+};

@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 const createCategoryValidationSchema = z.object({
   name: z.string().min(2, "Category name is required"),
@@ -6,4 +6,9 @@ const createCategoryValidationSchema = z.object({
   description: z.string().optional(),
 });
 
-export default createCategoryValidationSchema;
+const updateCategoryValidationSchema = createCategoryValidationSchema.partial();
+
+export const categoryValidation = {
+  createCategoryValidationSchema,
+  updateCategoryValidationSchema,
+};
