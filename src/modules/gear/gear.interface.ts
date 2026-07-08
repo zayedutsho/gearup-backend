@@ -4,7 +4,7 @@ export type TCreateGear = {
   brand: string;
   pricePerDay: number;
   stock: number;
-  image?: string;
+  imageUrl?: string;
   categoryId: string;
 };
 

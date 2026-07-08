@@ -7,37 +7,27 @@ import { gearValidation } from "./gear.validation";
 
 const router = Router();
 
-//Public Routes
-
-// Get all gears
-router.get("/", gearController.getAllGear);
-
-// Get single gear
-router.get("/:id", gearController.getSingleGear);
-
-// Provider Routes
-
-// Create gear
+// POST /api/provider/gear
 router.post(
-  "/provider/gear",
+  "/gear",
   auth(UserRole.PROVIDER, UserRole.ADMIN),
   validateRequest(gearValidation.createGearValidationSchema),
   gearController.createGear,
 );
 
-// Update gear
+// PATCH /api/provider/gear/:id
 router.patch(
-  "/provider/gear/:id",
+  "/gear/:id",
   auth(UserRole.PROVIDER, UserRole.ADMIN),
   validateRequest(gearValidation.updateGearValidationSchema),
   gearController.updateGear,
 );
 
-// Delete gear
+// DELETE /api/provider/gear/:id
 router.delete(
-  "/provider/gear/:id",
+  "/gear/:id",
   auth(UserRole.PROVIDER, UserRole.ADMIN),
   gearController.deleteGear,
 );
 
-export const gearRoutes = router;
+export const providerGearRoutes = router;
