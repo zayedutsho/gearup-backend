@@ -6,6 +6,7 @@ import { authRoutes } from "./modules/auth/auth.route";
 import { categoryRoute } from "./modules/category/category.route";
 import { providerGearRoutes } from "./modules/gear/provideGear.route";
 import { publicGearRoutes } from "./modules/gear/publicGear.route";
+import { paymentRoutes } from "./modules/payment/payment.route";
 import { providerRoutes } from "./modules/provider/provider.route";
 import { rentalRoutes } from "./modules/rental/customerRental.route";
 
@@ -34,5 +35,6 @@ app.use("/api/gear", publicGearRoutes);
 app.use("/api/provider", providerGearRoutes);
 app.use("/api/rentals", rentalRoutes);
 app.use("/api/provider", providerRoutes);
+app.use("/api/payments", paymentRoutes);
 
 export default app;
