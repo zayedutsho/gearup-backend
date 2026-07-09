@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
+import httpStatus from "http-status";
 import { JwtPayload } from "jsonwebtoken";
 import { UserRole } from "../../generated/prisma/enums";
 import config from "../config";
+import { AppError } from "../errors/AppError";
 import { prisma } from "../lib/prisma";
 import { catchAsync } from "../utils/catchAsync";
 import { jwtUtils } from "../utils/jwt.utils";
-
 declare global {
   namespace Express {
     interface Request {
@@ -28,7 +29,10 @@ export const auth = (...requiredRoles: UserRole[]) => {
         : req.headers.authorization;
 
     if (!token) {
-      throw new Error("Please log in to access this resource");
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "Please log in to access this resource",
+      );
     }
 
     const verifiedToken = jwtUtils.verifyToken(
@@ -37,14 +41,14 @@ export const auth = (...requiredRoles: UserRole[]) => {
     );
 
     if (!verifiedToken.success) {
-      throw new Error(verifiedToken.message);
+      throw new AppError(httpStatus.UNAUTHORIZED, verifiedToken.message);
     }
 
     const { email, name, role, id } = verifiedToken.data as JwtPayload;
 
     // ✅ Role check
     if (requiredRoles.length && !requiredRoles.includes(role)) {
-      throw new Error("Forbidden access");
+      throw new AppError(httpStatus.FORBIDDEN, "Forbidden access");
     }
 
     // ✅ Query by unique field
@@ -53,11 +57,11 @@ export const auth = (...requiredRoles: UserRole[]) => {
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError(httpStatus.NOT_FOUND, "User not found");
     }
 
     if (user.status === "BLOCKED") {
-      throw new Error("Your account has been blocked");
+      throw new AppError(httpStatus.FORBIDDEN, "Your account has been blocked");
     }
 
     // Attach user info to request

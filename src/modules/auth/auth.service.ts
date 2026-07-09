@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
+import httpStatus from "http-status";
 import { SignOptions } from "jsonwebtoken";
 import config from "../../config";
+import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { jwtUtils } from "../../utils/jwt.utils";
 import { LoginUserPayload, TRegisterUser } from "./auth.interface";
@@ -13,7 +15,10 @@ const createUserIntoDb = async (payload: TRegisterUser) => {
   });
 
   if (existingUser) {
-    throw new Error("User with this email already exists");
+    throw new AppError(
+      httpStatus.CONFLICT,
+      "User with this email already exists",
+    );
   }
 
   const hashedPassword = await bcrypt.hash(
@@ -63,11 +68,11 @@ const loginUser = async (payload: LoginUserPayload) => {
   const isPassWordMatched = await bcrypt.compare(password, user.password);
 
   if (!isPassWordMatched) {
-    throw new Error("password is not matched");
+    throw new AppError(httpStatus.BAD_REQUEST, "password is not matched");
   }
 
   if (user?.status === "BLOCKED") {
-    throw new Error("ur account has been blocked");
+    throw new AppError(httpStatus.FORBIDDEN, "ur account has been blocked");
   }
 
   const JwtPayload = {

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import config from "../../config";
+import { AppError } from "../../errors/AppError";
 import { catchAsync } from "../../utils/catchAsync";
 import { jwtUtils } from "../../utils/jwt.utils";
 import { sendResponse } from "../../utils/sendResponse";
@@ -60,12 +61,12 @@ const getMyProfile = catchAsync(
     );
 
     if (typeof verifiedToken === "string") {
-      throw new Error("Invalid token");
+      throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token");
     }
 
     const userId = req.user?.id;
     if (!userId) {
-      throw new Error("User not authenticated");
+      throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
     }
     const profile = await authServices.getMyProfileFromDB(userId);
     sendResponse(res, {

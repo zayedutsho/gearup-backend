@@ -1,4 +1,6 @@
+import httpStatus from "http-status";
 import { RentalStatus } from "../../../generated/prisma/enums";
+import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 
 const getProviderOrders = async (providerId: string) => {
@@ -38,7 +40,10 @@ const updateRentalStatus = async (
 
   // Prevent invalid transitions
   if (rental.status === "RETURNED" || rental.status === "CANCELLED") {
-    throw new Error("Rental can no longer be updated");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Rental can no longer be updated",
+    );
   }
 
   return prisma.rentalOrder.update({

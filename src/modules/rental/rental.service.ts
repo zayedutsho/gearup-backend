@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { TCreateRental } from "./rental.interface";
 
@@ -9,7 +11,10 @@ const createRentalOrder = async (
   const endDate = new Date(payload.endDate);
 
   if (startDate >= endDate) {
-    throw new Error("End date must be after start date");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "End date must be after start date",
+    );
   }
 
   const totalDays = Math.ceil(
@@ -27,7 +32,10 @@ const createRentalOrder = async (
   });
 
   if (gears.length !== payload.items.length) {
-    throw new Error("One or more gear items not found");
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "One or more gear items not found",
+    );
   }
 
   // Stock validation
@@ -37,7 +45,10 @@ const createRentalOrder = async (
     if (!gear) continue;
 
     if (gear.stock < item.quantity) {
-      throw new Error(`${gear.title} does not have enough stock`);
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `${gear.title} does not have enough stock`,
+      );
     }
   }
 
@@ -45,13 +56,13 @@ const createRentalOrder = async (
   const providerIds = [...new Set(gears.map((g) => g.providerId))];
 
   if (providerIds.length > 1) {
-    throw new Error(
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
       "You can only rent gear from one provider in a single order",
     );
   }
 
-  const providerId = providerIds[0];
-
+  const providerId = providerIds[0]!;
   // Calculate total amount
   let totalAmount = 0;
 

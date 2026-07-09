@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { TCreateReview } from "./review.interface";
 
@@ -15,7 +17,10 @@ const createReview = async (payload: TCreateReview, customerId: string) => {
   });
 
   if (!rental) {
-    throw new Error("You can only review gear after completing the rental");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You can only review gear after completing the rental",
+    );
   }
 
   const existingReview = await prisma.review.findFirst({
@@ -26,7 +31,7 @@ const createReview = async (payload: TCreateReview, customerId: string) => {
   });
 
   if (existingReview) {
-    throw new Error("You already reviewed this gear");
+    throw new AppError(httpStatus.CONFLICT, "You already reviewed this gear");
   }
 
   return prisma.review.create({

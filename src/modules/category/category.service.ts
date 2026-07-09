@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import {
   TCategoryQuery,
@@ -15,7 +17,7 @@ const createCategory = async (payload: TCreateCategory) => {
   });
 
   if (existingCategory) {
-    throw new Error("Category already exists");
+    throw new AppError(httpStatus.CONFLICT, "Category already exists");
   }
 
   const result = await prisma.category.create({
@@ -86,7 +88,7 @@ const updateCategory = async (id: string, payload: TUpdateCategory) => {
     });
 
     if (existing) {
-      throw new Error("Category already exists");
+      throw new AppError(httpStatus.CONFLICT, "Category already exists");
     }
   }
 

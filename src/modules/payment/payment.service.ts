@@ -1,5 +1,7 @@
+import httpStatus from "http-status";
 import Stripe from "stripe";
 import config from "../../config";
+import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/strripe";
 
@@ -17,7 +19,7 @@ const createCheckoutSession = async (
   });
 
   if (rental.paymentStatus === "PAID") {
-    throw new Error("Rental already paid");
+    throw new AppError(httpStatus.CONFLICT, "Rental already paid");
   }
 
   const payment = await prisma.payment.create({
@@ -106,7 +108,7 @@ const confirmPayment = async (sessionId: string, customerId: string) => {
   const session = await stripe.checkout.sessions.retrieve(sessionId);
 
   if (!session.metadata?.paymentId) {
-    throw new Error("Invalid payment session");
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid payment session");
   }
 
   const payment = await prisma.payment.findUniqueOrThrow({
@@ -119,7 +121,7 @@ const confirmPayment = async (sessionId: string, customerId: string) => {
   });
 
   if (payment.rentalOrder.customerId !== customerId) {
-    throw new Error("Forbidden");
+    throw new AppError(httpStatus.FORBIDDEN, "Forbidden");
   }
 
   return payment;

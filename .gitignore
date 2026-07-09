@@ -5,3 +5,5 @@ generated
 .env
 
 /generated/prisma
+
+.vercel

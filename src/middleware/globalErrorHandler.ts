@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { Prisma } from "../../generated/prisma/client";
+import { AppError } from "../errors/AppError";
 
 export const globalErrorHandler = (
   err: any,
@@ -10,10 +11,16 @@ export const globalErrorHandler = (
 ) => {
   let statusCode = 500;
   let message = "Something went wrong";
-  let errorDetails: any = [];
+  let errorDetails: any[] = [];
+
+  // Custom App Error
+  if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    message = err.message;
+  }
 
   // Zod Validation Error
-  if (err instanceof ZodError) {
+  else if (err instanceof ZodError) {
     statusCode = 400;
     message = "Validation Error";
     errorDetails = err.issues;
@@ -38,6 +45,7 @@ export const globalErrorHandler = (
 
   res.status(statusCode).json({
     success: false,
+    statusCode,
     message,
     errorDetails,
     stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
