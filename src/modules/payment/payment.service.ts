@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import config from "../../config";
 import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/strripe";
@@ -59,6 +60,48 @@ const createCheckoutSession = async (
   };
 };
 
+const handleWebhook = async (payload: Buffer, signature: string) => {
+  const event = stripe.webhooks.constructEvent(
+    payload,
+    signature,
+    config.stripe_webhook_secret,
+  );
+  switch (event.type) {
+    case "checkout.session.completed":
+      // update database
+      break;
+
+    default:
+      break;
+  }
+  const session = event.data.object as Stripe.Checkout.Session;
+  const paymentId = session.metadata?.paymentId;
+  const rentalOrderId = session.metadata?.rentalOrderId;
+
+  //upadate payment
+  await prisma.payment.update({
+    where: {
+      id: paymentId,
+    },
+    data: {
+      status: "PAID",
+      transactionId: session.payment_intent as string,
+      paidAt: new Date(),
+    },
+  });
+  //update rental
+  await prisma.rentalOrder.update({
+    where: {
+      id: rentalOrderId,
+    },
+    data: {
+      paymentStatus: "PAID",
+    },
+  });
+  return;
+};
+
 export const paymentService = {
   createCheckoutSession,
+  handleWebhook,
 };

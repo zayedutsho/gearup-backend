@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import { UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/auth";
 import { validateRequest } from "../../middleware/validateRequest";
@@ -14,4 +14,10 @@ router.post(
   paymentController.createCheckoutSession,
 );
 
+//webhook
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  paymentController.stripeWebhook,
+);
 export const paymentRoutes = router;
