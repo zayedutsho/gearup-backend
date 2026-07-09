@@ -14,6 +14,21 @@ router.post(
   paymentController.createCheckoutSession,
 );
 
+router.post(
+  "/confirm",
+  auth(UserRole.CUSTOMER),
+  validateRequest(paymentValidation.confirmPaymentSchema),
+  paymentController.confirmPayment,
+);
+
+router.get("/", auth(UserRole.CUSTOMER), paymentController.getMyPayments);
+
+router.get(
+  "/:id",
+  auth(UserRole.CUSTOMER),
+  paymentController.getPaymentDetails,
+);
+
 //webhook
 router.post(
   "/webhook",

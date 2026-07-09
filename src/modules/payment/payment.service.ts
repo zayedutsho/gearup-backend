@@ -57,6 +57,7 @@ const createCheckoutSession = async (
   });
   return {
     checkoutUrl: session.url,
+    sessionId: session.id,
   };
 };
 
@@ -101,7 +102,71 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
   return;
 };
 
+const confirmPayment = async (sessionId: string, customerId: string) => {
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  if (!session.metadata?.paymentId) {
+    throw new Error("Invalid payment session");
+  }
+
+  const payment = await prisma.payment.findUniqueOrThrow({
+    where: {
+      id: session.metadata!.paymentId,
+    },
+    include: {
+      rentalOrder: true,
+    },
+  });
+
+  if (payment.rentalOrder.customerId !== customerId) {
+    throw new Error("Forbidden");
+  }
+
+  return payment;
+};
+
+const getMyPayments = async (customerId: string) => {
+  return prisma.payment.findMany({
+    where: {
+      rentalOrder: {
+        customerId,
+      },
+    },
+    include: {
+      rentalOrder: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+const getPaymentDetails = async (paymentId: string, customerId: string) => {
+  return prisma.payment.findFirstOrThrow({
+    where: {
+      id: paymentId,
+      rentalOrder: {
+        customerId,
+      },
+    },
+    include: {
+      rentalOrder: {
+        include: {
+          rentalItems: {
+            include: {
+              gear: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
 export const paymentService = {
   createCheckoutSession,
   handleWebhook,
+  confirmPayment,
+  getMyPayments,
+  getPaymentDetails,
 };
