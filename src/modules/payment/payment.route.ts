@@ -1,7 +1,9 @@
-import express, { Router } from "express";
+import { Router } from "express";
 import { UserRole } from "../../../generated/prisma/enums";
+
 import { auth } from "../../middleware/auth";
 import { validateRequest } from "../../middleware/validateRequest";
+
 import { paymentController } from "./payment.controller";
 import { paymentValidation } from "./payment.validation";
 
@@ -29,10 +31,7 @@ router.get(
   paymentController.getPaymentDetails,
 );
 
-//webhook
-router.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  paymentController.stripeWebhook,
-);
+// Stripe Webhook
+router.post("/webhook", paymentController.stripeWebhook);
+
 export const paymentRoutes = router;

@@ -59,11 +59,15 @@ const createCheckoutSession = async (
 };
 
 const handleWebhook = async (payload: Buffer, signature: string) => {
+  console.log("🔥 Webhook received");
+
   const event = stripe.webhooks.constructEvent(
     payload,
     signature,
     config.stripe_webhook_secret,
   );
+
+  console.log("Event:", event.type);
 
   if (event.type !== "checkout.session.completed") {
     return;
@@ -71,43 +75,45 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
 
   const session = event.data.object as Stripe.Checkout.Session;
 
+  console.log(session.metadata);
+
   const paymentId = session.metadata?.paymentId;
   const rentalOrderId = session.metadata?.rentalOrderId;
 
-  if (!paymentId || !rentalOrderId) return;
+  try {
+    await prisma.$transaction(async (tx) => {
+      console.log("Updating payment...");
 
-  await prisma.$transaction(async (tx) => {
-    const payment = await tx.payment.findUnique({
-      where: {
-        id: paymentId,
-      },
+      await tx.payment.update({
+        where: {
+          id: paymentId!,
+        },
+        data: {
+          status: "PAID",
+          transactionId: session.payment_intent?.toString(),
+          paidAt: new Date(),
+        },
+      });
+
+      console.log("Payment updated");
+
+      console.log("Updating rental...");
+
+      const rental = await tx.rentalOrder.update({
+        where: {
+          id: rentalOrderId!,
+        },
+        data: {
+          paymentStatus: "PAID",
+          status: "CONFIRMED",
+        },
+      });
+
+      console.log("Rental updated:", rental);
     });
-
-    if (!payment || payment.status === "PAID") {
-      return;
-    }
-
-    await tx.payment.update({
-      where: {
-        id: paymentId,
-      },
-      data: {
-        status: "PAID",
-        transactionId: session.payment_intent?.toString(),
-        paidAt: new Date(),
-      },
-    });
-
-    await tx.rentalOrder.update({
-      where: {
-        id: rentalOrderId,
-      },
-      data: {
-        paymentStatus: "PAID",
-        status: "CONFIRMED",
-      },
-    });
-  });
+  } catch (err) {
+    console.error("WEBHOOK ERROR:", err);
+  }
 };
 
 const confirmPayment = async (sessionId: string, customerId: string) => {
@@ -130,8 +136,9 @@ const confirmPayment = async (sessionId: string, customerId: string) => {
     throw new AppError(httpStatus.FORBIDDEN, "Forbidden");
   }
 
-  if (payment.status !== "PAID") {
-    await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx) => {
+    // Update payment only if needed
+    if (payment.status !== "PAID") {
       await tx.payment.update({
         where: {
           id: payment.id,
@@ -142,18 +149,19 @@ const confirmPayment = async (sessionId: string, customerId: string) => {
           paidAt: new Date(),
         },
       });
+    }
 
-      await tx.rentalOrder.update({
-        where: {
-          id: payment.rentalOrderId,
-        },
-        data: {
-          paymentStatus: "PAID",
-          status: "CONFIRMED",
-        },
-      });
+    // Always ensure rental is confirmed
+    await tx.rentalOrder.update({
+      where: {
+        id: payment.rentalOrderId,
+      },
+      data: {
+        paymentStatus: "PAID",
+        status: "CONFIRMED",
+      },
     });
-  }
+  });
 
   return prisma.payment.findUniqueOrThrow({
     where: {
