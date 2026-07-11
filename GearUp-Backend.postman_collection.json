@@ -1,0 +1,865 @@
+{
+  "info": {
+    "_postman_id": "ba5d98c8-40ca-4668-9d3f-93a37c198a10",
+    "name": "GearUp-Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28889269"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "createUser",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"zayed5\",\r\n    \"email\": \"zayed5@gmail.com\",\r\n    \"password\": \"password123\",\r\n    \"role\": \"CUSTOMER\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/auth/register",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "loginUser",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rizon@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/auth/login/",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getProfile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"zayed1@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/auth/me",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "category",
+      "item": [
+        {
+          "name": "createCategory",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"safty\",\r\n    \"description\": \"safty gears\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAllCategories",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Cycling\",\r\n    \"description\": \"Cycling gears\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/categories?page=1&limit=10&sortOrder=asc",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": null,
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "searchTerm",
+                  "value": "cycl",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getSingleCategory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/categories/104b24c7-199d-43bf-b8be-88db5ac196bd",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "104b24c7-199d-43bf-b8be-88db5ac196bd"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateCategory",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"saftyOne\",\r\n    \"description\": \"safty gearsI\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/categories/86aaaf0c-0727-4700-9ebc-1ce4404e3197",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "86aaaf0c-0727-4700-9ebc-1ce4404e3197"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delteCategory",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"cricketI\",\r\n    \"description\": \"Cricket gearsI\"\r\n}"
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/categories/104b24c7-199d-43bf-b8be-88db5ac196bd",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "104b24c7-199d-43bf-b8be-88db5ac196bd"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "gear&povide",
+      "item": [
+        {
+          "name": "createGear",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"premium swim suit2\",\r\n    \"description\": \"premium swim suit2.\",\r\n    \"brand\": \"Trek\",\r\n    \"pricePerDay\": 500,\r\n    \"stock\": 2,\r\n    \"imageUrl\": \"https://images.unsplash.com/photo-1541625602330-2277a4c46182\",\r\n    \"categoryId\": \"4ddbe0b9-cbc1-4ca5-9255-b116bb1af597\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/provider/gear",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "gear"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAllGear",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"swim towel\",\r\n    \"description\": \"Professional swim towel.\",\r\n    \"brand\": \"Trek\",\r\n    \"pricePerDay\": 5,\r\n    \"stock\": 2,\r\n    \"imageUrl\": \"https://images.unsplash.com/photo-1541625602330-2277a4c46182\",\r\n    \"categoryId\": \"4ddbe0b9-cbc1-4ca5-9255-b116bb1af597\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/gear?&page=1&limit=5&categoryId=4ddbe0b9-cbc1-4ca5-9255-b116bb1af597&minPrice=100&maxPrice=500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "gear"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": null
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "type": "text"
+                },
+                {
+                  "key": "searchTerm",
+                  "value": "T",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "categoryId",
+                  "value": "4ddbe0b9-cbc1-4ca5-9255-b116bb1af597",
+                  "type": "text"
+                },
+                {
+                  "key": "brand",
+                  "value": "Trek",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "500",
+                  "type": "text"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "pricePerDay",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getSingleGear",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/gear/e44e574a-412d-466a-84fb-c4c280a09dd6",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "gear",
+                "e44e574a-412d-466a-84fb-c4c280a09dd6"
+              ],
+              "query": [
+                {
+                  "key": null,
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "disabled": true
+                },
+                {
+                  "key": "categoryId",
+                  "value": "4ddbe0b9-cbc1-4ca5-9255-b116bb1af597",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "100",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "500",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateGear",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"super premium swim suit2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/provider/gear/e44e574a-412d-466a-84fb-c4c280a09dd6",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "gear",
+                "e44e574a-412d-466a-84fb-c4c280a09dd6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteGear",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/provider/gear/e44e574a-412d-466a-84fb-c4c280a09dd6",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "gear",
+                "e44e574a-412d-466a-84fb-c4c280a09dd6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "rental",
+      "item": [
+        {
+          "name": "creatRentals",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"startDate\": \"2026-07-10T00:00:00.000Z\",\r\n    \"endDate\": \"2026-07-13T00:00:00.000Z\",\r\n    \"items\": [\r\n        {\r\n            \"gearId\": \"69190cde-bafb-4c4e-998d-0582719423c8\",\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/rentals",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getMyRentals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/rentals",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getSingleRental",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/rentals/3521042b-d865-4408-8d8a-ae831deca4b6",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "rentals",
+                "3521042b-d865-4408-8d8a-ae831deca4b6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "provider",
+      "item": [
+        {
+          "name": "getOrders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/provider/orders",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateOrder",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"RETURNED\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/provider/orders/97ae0c50-cc78-4819-aaa6-a7aebbb475eb",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "orders",
+                "97ae0c50-cc78-4819-aaa6-a7aebbb475eb"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "item": [
+        {
+          "name": "checkOut",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rentalOrderId\": \"74de35fd-7df3-4766-aacf-f8de15cb0aa6\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/payments/create-session",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "create-session"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "confirm",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"sessionId\": \"cs_test_a1KsrZ2FrXBqP57IBRvDcGhO4ci1ybde7BL2g8l7sbi2A25E5arByPkF7r\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/payments/confirm",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/payments",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "payments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "paymentDetails",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/payments/97766a7c-919a-4a4c-ad93-571d43209d19",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "97766a7c-919a-4a4c-ad93-571d43209d19"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "review",
+      "item": [
+        {
+          "name": "createReview",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"gearId\": \"dfdf5291-1cb5-48a3-8214-fc6d2ce7519f\",\r\n  \"rating\": 5,\r\n  \"comment\": \"Excellent quality gear. Highly recommended!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/reviews",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "admin",
+      "item": [
+        {
+          "name": "getUsers",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"gearId\": \"69190cde-bafb-4c4e-998d-0582719423c8\",\r\n  \"rating\": 5,\r\n  \"comment\": \"Excellent quality gear. Highly recommended!\"\r\n}"
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/admin/users",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateUser",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\":\"ACTIVE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/api/admin/users/b2b4f320-fee4-4c8c-9cc8-c0780923ce97",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "b2b4f320-fee4-4c8c-9cc8-c0780923ce97"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getRentals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/api/admin/rentals",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "rentals"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
