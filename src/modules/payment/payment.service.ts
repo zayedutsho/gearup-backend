@@ -7,13 +7,11 @@ import { stripe } from "../../lib/strripe";
 
 const createCheckoutSession = async (
   rentalOrderId: string,
-
   customerId: string,
 ) => {
   const rental = await prisma.rentalOrder.findFirstOrThrow({
     where: {
       id: rentalOrderId,
-
       customerId,
     },
   });
@@ -25,14 +23,11 @@ const createCheckoutSession = async (
   const payment = await prisma.payment.create({
     data: {
       rentalOrderId: rental.id,
-
       amount: rental.totalAmount,
-
       paymentProvider: "STRIPE",
     },
   });
 
-  ///create session
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
@@ -42,7 +37,6 @@ const createCheckoutSession = async (
         price_data: {
           currency: "usd",
           unit_amount: Math.round(rental.totalAmount * 100),
-
           product_data: {
             name: `Rental Order ${rental.id}`,
             description: "Gear Rental",
@@ -57,6 +51,7 @@ const createCheckoutSession = async (
     success_url: `${config.app_url}/premium?success=true`,
     cancel_url: `${config.app_url}/payment?success=false`,
   });
+
   return {
     checkoutUrl: session.url,
     sessionId: session.id,
@@ -69,39 +64,50 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
     signature,
     config.stripe_webhook_secret,
   );
-  switch (event.type) {
-    case "checkout.session.completed":
-      // update database
-      break;
 
-    default:
-      break;
+  if (event.type !== "checkout.session.completed") {
+    return;
   }
+
   const session = event.data.object as Stripe.Checkout.Session;
+
   const paymentId = session.metadata?.paymentId;
   const rentalOrderId = session.metadata?.rentalOrderId;
 
-  //upadate payment
-  await prisma.payment.update({
-    where: {
-      id: paymentId,
-    },
-    data: {
-      status: "PAID",
-      transactionId: session.payment_intent as string,
-      paidAt: new Date(),
-    },
+  if (!paymentId || !rentalOrderId) return;
+
+  await prisma.$transaction(async (tx) => {
+    const payment = await tx.payment.findUnique({
+      where: {
+        id: paymentId,
+      },
+    });
+
+    if (!payment || payment.status === "PAID") {
+      return;
+    }
+
+    await tx.payment.update({
+      where: {
+        id: paymentId,
+      },
+      data: {
+        status: "PAID",
+        transactionId: session.payment_intent?.toString(),
+        paidAt: new Date(),
+      },
+    });
+
+    await tx.rentalOrder.update({
+      where: {
+        id: rentalOrderId,
+      },
+      data: {
+        paymentStatus: "PAID",
+        status: "CONFIRMED",
+      },
+    });
   });
-  //update rental
-  await prisma.rentalOrder.update({
-    where: {
-      id: rentalOrderId,
-    },
-    data: {
-      paymentStatus: "PAID",
-    },
-  });
-  return;
 };
 
 const confirmPayment = async (sessionId: string, customerId: string) => {
@@ -113,7 +119,7 @@ const confirmPayment = async (sessionId: string, customerId: string) => {
 
   const payment = await prisma.payment.findUniqueOrThrow({
     where: {
-      id: session.metadata!.paymentId,
+      id: session.metadata.paymentId,
     },
     include: {
       rentalOrder: true,
@@ -124,7 +130,39 @@ const confirmPayment = async (sessionId: string, customerId: string) => {
     throw new AppError(httpStatus.FORBIDDEN, "Forbidden");
   }
 
-  return payment;
+  if (payment.status !== "PAID") {
+    await prisma.$transaction(async (tx) => {
+      await tx.payment.update({
+        where: {
+          id: payment.id,
+        },
+        data: {
+          status: "PAID",
+          transactionId: session.payment_intent?.toString(),
+          paidAt: new Date(),
+        },
+      });
+
+      await tx.rentalOrder.update({
+        where: {
+          id: payment.rentalOrderId,
+        },
+        data: {
+          paymentStatus: "PAID",
+          status: "CONFIRMED",
+        },
+      });
+    });
+  }
+
+  return prisma.payment.findUniqueOrThrow({
+    where: {
+      id: payment.id,
+    },
+    include: {
+      rentalOrder: true,
+    },
+  });
 };
 
 const getMyPayments = async (customerId: string) => {
